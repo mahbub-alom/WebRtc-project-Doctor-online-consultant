@@ -11,6 +11,7 @@ import { io, Socket } from "socket.io-client";
 interface iSocketContext {
   onlineUsers: SocketUser[] | null;
   ongoingCall: OngoingCall | null;
+  localStream: MediaStream | null;
   handleCall: (user: SocketUser) => void;
 }
 
@@ -26,14 +27,49 @@ export const SocketContextProvider = ({
   const [isSocketConnected, setIsSocketConnected] = useState(false);
   const [onlineUsers, setOnlineUsers] = useState<SocketUser[] | null>(null);
   const [ongoingCall, setOngoingCall] = useState<OngoingCall | null>(null);
+  const [localStream, setLocalStream] = useState<MediaStream | null>(null);
 
   const currentSocketUser = onlineUsers?.find(
     (onlineUser) => onlineUser.userId === user?.id
   );
 
-  const handleCall = useCallback(
-    (user: SocketUser) => {
+  const getMediaStream = useCallback(async(faceMode?:string) => {
+      if (localStream) {
+        return localStream;
+      }
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput"
+        );
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: true,
+          video: {
+            width: { min: 640, ideal: 1280, max: 1920 },
+            height: { min: 360, ideal: 720, max: 1080 },
+            frameRate: { min: 16, ideal: 30, max: 30 },
+            facingMode: videoDevices.length > 0 ? faceMode : undefined,
+          },
+        })
+        setLocalStream(stream)
+        return stream;
+      } catch (error) {
+        console.log("failed to get the stream", error);
+        setLocalStream(null);
+        return null;
+      }
+    },
+    [localStream]
+  );
+
+  const handleCall = useCallback(async (user: SocketUser) => {
       if (!currentSocketUser || !socket) return;
+
+      const stream = await getMediaStream();
+      if (!stream) {
+        console.log("no stream in handleCall");
+        return;
+      }
 
       const participants = { caller: currentSocketUser, receiver: user };
       setOngoingCall({
@@ -42,7 +78,7 @@ export const SocketContextProvider = ({
       });
       socket.emit("call", participants);
     },
-    [socket, ongoingCall, currentSocketUser]
+    [socket, currentSocketUser,getMediaStream]
   );
 
   const onIncomingCall = useCallback(
@@ -52,7 +88,7 @@ export const SocketContextProvider = ({
         isRinging: true,
       });
     },
-    [socket, user, ongoingCall]
+    []
   );
 
   //initializing a socket
@@ -117,6 +153,7 @@ export const SocketContextProvider = ({
       value={{
         onlineUsers,
         ongoingCall,
+        localStream,
         handleCall,
       }}
     >

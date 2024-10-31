@@ -11,7 +11,7 @@ const CallNotification = () => {
 
   return (
     <div className="absolute bg-slate-500 w-screen bg-opacity-70 h-screen top-0 left-0 items-center flex justify-center">
-      <div className="bg-white min-w-[300px] flex flex-col items-center justify-center rounded p-4">
+      <div className="bg-white min-w-[300px] flex flex-col items-center justify-center rounded p-4 min-h-[100px]">
         <div className="flex flex-col items-center">
           <Avatar src={ongoingCall?.participants?.caller?.profile?.imageUrl} />
           <h3>
