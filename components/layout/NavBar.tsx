@@ -19,14 +19,27 @@ const NavBar = () => {
             onClick={() => router.push("/")}
           >
             <Video />
-            <div className="font-bold text-xl">VidChat</div>
+            <div className="font-bold text-xl">doctor consultation</div>
           </div>
           <div className="flex gap-3 items-center">
             <UserButton />
-            {!userId && <>
-            <Button onClick={()=>router.push("/sign-in")} className="btn-sm" variant="outline">Sign In</Button>
-            <Button onClick={()=>router.push("sign-up")} className="btn-sm">Sign Up</Button>
-            </>}
+            {!userId && (
+              <>
+                <Button
+                  onClick={() => router.push("/sign-in")}
+                  className="btn-sm"
+                  variant="outline"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={() => router.push("sign-up")}
+                  className="btn-sm"
+                >
+                  Sign Up
+                </Button>
+              </>
+            )}
           </div>
         </div>
       </Container>
