@@ -48,7 +48,7 @@ const VideoCall = () => {
 
   return (
     <div>
-      <div className="mt-4 relative">
+      <div className="mt-4 relative mx-auto max-w-[800px]">
         {localStream && (
           <VideoContainer
             stream={localStream}

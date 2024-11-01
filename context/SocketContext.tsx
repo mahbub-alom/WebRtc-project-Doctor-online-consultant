@@ -213,6 +213,7 @@ export const SocketContextProvider = ({
       const stream = await getMediaStream();
       if (!stream) {
         console.log("could not get stream in handleJoinCall");
+        handleHangup({ ongoingCall: ongoingCall ? ongoingCall : undefined ,isEmitHangup:true})
         return;
       }
       const newPeer = createPeer(stream, true);
