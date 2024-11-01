@@ -12,6 +12,12 @@ export type OngoingCall={
     isRinging:boolean;
 }
 
+// export type onIncomingCall={
+//     participants:Participants;
+//     isRinging:boolean;
+// }
+
+
 export type Participants={
     caller:SocketUser;
     receiver:SocketUser;

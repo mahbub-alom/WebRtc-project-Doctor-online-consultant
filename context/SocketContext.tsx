@@ -1,4 +1,4 @@
-import { OngoingCall, PeerData, SocketUser } from "@/types";
+import { OngoingCall, Participants, PeerData, SocketUser } from "@/types";
 import { useUser } from "@clerk/nextjs";
 import {
   createContext,
